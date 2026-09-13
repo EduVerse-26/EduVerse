@@ -50,7 +50,6 @@ export default function MarksPage() {
             <div>
               <CardTitle>Select Course</CardTitle>
               <CardDescription>Choose a course to enter marks</CardDescription>
-            </CardDescription>
             </div>
             <Select value={selectedCourse} onValueChange={setSelectedCourse}>
               <SelectTrigger className="w-[280px]">
@@ -91,7 +90,7 @@ export default function MarksPage() {
                 </TableHeader>
                 <TableBody>
                   {marks?.map((mark) => (
-                    <TableRow key={mark.id}>
+                    <TableRow key={mark.studentId}>
                       <TableCell className="font-mono text-xs">{mark.studentId.substring(0,8)}</TableCell>
                       <TableCell className="font-medium">{mark.studentName}</TableCell>
                       <TableCell>

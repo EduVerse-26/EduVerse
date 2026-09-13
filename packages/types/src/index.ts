@@ -192,6 +192,8 @@ export interface TimetableSlot {
   facultyName?: string;
   room?: string;
   type: 'lecture' | 'lab' | 'tutorial' | 'break' | 'free';
+  batch?: string;
+  section?: string;
 }
 
 export type DayOfWeek = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday';
@@ -262,6 +264,7 @@ export interface LearningResource {
   description?: string;
   courseId: string;
   courseName: string;
+  courseCode?: string;
   type: ResourceType;
   fileUrl?: string;
   fileName?: string;
