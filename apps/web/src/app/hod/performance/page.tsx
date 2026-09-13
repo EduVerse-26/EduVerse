@@ -6,7 +6,7 @@ import { getClassPerformance } from '@eduverse/api';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { TrendingUp, Users, AlertTriangle, GraduationCap } from 'lucide-react';
+import { TrendingUp, Users, AlertTriangle, GraduationCap, BarChart3 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function PerformancePage() {
@@ -22,24 +22,24 @@ export default function PerformancePage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Department Performance</h1>
-          <p className="text-muted-foreground mt-2">Monitor academic metrics and identify students needing support.</p>
+          <h2 className="text-2xl font-bold tracking-tight text-foreground">Department Performance & Analytics</h2>
+          <p className="text-xs text-muted-foreground mt-0.5">Continuous evaluation metrics, section distributions, and early-warning alerts</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-2">
           <Select value={batch} onValueChange={setBatch}>
-            <SelectTrigger className="w-[120px]">
+            <SelectTrigger className="w-[130px] h-9 text-xs rounded-xl">
               <SelectValue placeholder="Batch" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="rounded-xl text-xs">
               <SelectItem value="2024">Batch 2024</SelectItem>
               <SelectItem value="2025">Batch 2025</SelectItem>
             </SelectContent>
           </Select>
           <Select value={section} onValueChange={setSection}>
-            <SelectTrigger className="w-[120px]">
+            <SelectTrigger className="w-[120px] h-9 text-xs rounded-xl">
               <SelectValue placeholder="Section" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="rounded-xl text-xs">
               <SelectItem value="A">Section A</SelectItem>
               <SelectItem value="B">Section B</SelectItem>
             </SelectContent>
@@ -47,109 +47,136 @@ export default function PerformancePage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
-          <CardContent className="p-6">
+      {/* Overview Stat Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="stat-card">
+          <CardContent className="p-0">
             <div className="flex justify-between items-start">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground mb-1">Avg. Attendance</p>
-                <p className="text-3xl font-bold">{performance?.averageAttendance || 0}%</p>
+              <div className="space-y-1">
+                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Class Attendance</p>
+                <p className="text-3xl font-bold tracking-tight text-foreground">{performance?.averageAttendance || 0}%</p>
               </div>
-              <div className="p-3 bg-emerald-500/10 rounded-xl text-emerald-500">
+              <div className="w-10 h-10 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center justify-center shrink-0">
                 <Users className="w-5 h-5" />
               </div>
+            </div>
+            <div className="mt-4 pt-3 border-t border-border/50 text-xs text-muted-foreground">
+              Section average
             </div>
           </CardContent>
         </Card>
         
-        <Card>
-          <CardContent className="p-6">
+        <Card className="stat-card">
+          <CardContent className="p-0">
             <div className="flex justify-between items-start">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground mb-1">Avg. Marks</p>
-                <p className="text-3xl font-bold">{performance?.averageMarks || 0}%</p>
+              <div className="space-y-1">
+                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Average Score</p>
+                <p className="text-3xl font-bold tracking-tight text-foreground">{performance?.averageMarks || 0}%</p>
               </div>
-              <div className="p-3 bg-blue-500/10 rounded-xl text-blue-500">
+              <div className="w-10 h-10 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center shrink-0">
                 <GraduationCap className="w-5 h-5" />
               </div>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground mb-1">Top Performers</p>
-                <p className="text-3xl font-bold">{performance?.topPerformers?.length || 0}</p>
-              </div>
-              <div className="p-3 bg-amber-500/10 rounded-xl text-amber-500">
-                <TrendingUp className="w-5 h-5" />
-              </div>
+            <div className="mt-4 pt-3 border-t border-border/50 text-xs text-muted-foreground">
+              Continuous assessment
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-red-500/30">
-          <CardContent className="p-6">
+        <Card className="stat-card">
+          <CardContent className="p-0">
             <div className="flex justify-between items-start">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground mb-1">At Risk Students</p>
-                <p className="text-3xl font-bold text-red-500">{performance?.lowPerformers?.length || 0}</p>
+              <div className="space-y-1">
+                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Honor Students</p>
+                <p className="text-3xl font-bold tracking-tight text-foreground">{performance?.topPerformers?.length || 0}</p>
               </div>
-              <div className="p-3 bg-red-500/10 rounded-xl text-red-500">
+              <div className="w-10 h-10 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-xl flex items-center justify-center shrink-0">
+                <TrendingUp className="w-5 h-5" />
+              </div>
+            </div>
+            <div className="mt-4 pt-3 border-t border-border/50 text-xs text-muted-foreground">
+              Above 85% aggregate
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="stat-card border-rose-500/30">
+          <CardContent className="p-0">
+            <div className="flex justify-between items-start">
+              <div className="space-y-1">
+                <p className="text-xs font-medium uppercase tracking-wider text-rose-600 dark:text-rose-400">At-Risk Students</p>
+                <p className="text-3xl font-bold tracking-tight text-rose-600 dark:text-rose-400">{performance?.lowPerformers?.length || 0}</p>
+              </div>
+              <div className="w-10 h-10 bg-rose-500/10 text-rose-600 dark:text-rose-400 rounded-xl flex items-center justify-center shrink-0">
                 <AlertTriangle className="w-5 h-5" />
               </div>
+            </div>
+            <div className="mt-4 pt-3 border-t border-border/50 text-xs text-rose-600/80">
+              Below 65% benchmark
             </div>
           </CardContent>
         </Card>
       </div>
 
+      {/* Reporting / Chart Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Subject Distribution</CardTitle>
-            <CardDescription>Average marks across courses</CardDescription>
+        <Card className="border border-border/70 shadow-xs">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-semibold flex items-center gap-2 text-foreground">
+              <BarChart3 className="w-4 h-4 text-primary" />
+              Subject Score Distribution
+            </CardTitle>
+            <p className="text-xs text-muted-foreground">Mean continuous assessment score across department courses</p>
           </CardHeader>
           <CardContent>
-            <div className="h-[300px]">
+            <div className="h-[280px] w-full pt-4">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={performance?.subjectDistribution || []}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-                  <XAxis dataKey="courseName" axisLine={false} tickLine={false} />
-                  <YAxis axisLine={false} tickLine={false} />
+                <BarChart data={performance?.subjectDistribution || []} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.6} />
+                  <XAxis dataKey="courseName" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} />
+                  <YAxis axisLine={false} tickLine={false} domain={[0, 100]} tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }} />
                   <Tooltip 
-                    cursor={{ fill: 'hsl(var(--muted))' }}
-                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                    cursor={{ fill: 'hsl(var(--muted)/0.4)' }}
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--card))',
+                      borderColor: 'hsl(var(--border))',
+                      borderRadius: '12px',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                      fontSize: '12px',
+                      color: 'hsl(var(--foreground))',
+                    }}
                   />
-                  <Bar dataKey="averageMarks" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="averageMarks" name="Average Marks %" fill="#3B82F6" radius={[6, 6, 0, 0]} maxBarSize={42} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Needs Attention</CardTitle>
-            <CardDescription>Students below threshold</CardDescription>
+        <Card className="border border-border/70 shadow-xs">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-semibold flex items-center gap-2 text-foreground">
+              <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400" />
+              Support Intervention List
+            </CardTitle>
+            <p className="text-xs text-muted-foreground">Students flagged below academic retention standards</p>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
+            <div className="space-y-3 pt-2">
               {performance?.lowPerformers?.map((student, i) => (
-                <div key={i} className="flex items-center justify-between p-4 border border-red-500/20 bg-red-500/5 rounded-lg">
+                <div key={i} className="flex items-center justify-between p-3.5 border border-rose-500/20 bg-rose-500/[0.03] rounded-xl">
                   <div>
-                    <p className="font-medium">{student.studentName}</p>
-                    <p className="text-sm text-muted-foreground">{student.studentId}</p>
+                    <p className="font-semibold text-sm text-foreground">{student.studentName}</p>
+                    <p className="text-xs text-muted-foreground font-mono">{student.studentId}</p>
                   </div>
-                  <Badge variant="destructive" className="bg-red-500">
-                    {student.percentage}% Avg
+                  <Badge variant="destructive" className="text-xs font-mono">
+                    {student.percentage}% Average
                   </Badge>
                 </div>
               ))}
               {(!performance?.lowPerformers || performance.lowPerformers.length === 0) && (
-                <div className="py-8 text-center text-muted-foreground">
-                  No students currently flagged as at risk.
+                <div className="py-12 text-center text-xs text-muted-foreground">
+                  No students currently flagged as at risk for this section.
                 </div>
               )}
             </div>

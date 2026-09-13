@@ -5,7 +5,7 @@ import { getQuizzes } from '@eduverse/api';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { HelpCircle, Plus, Clock, Users, PlayCircle, Settings2 } from 'lucide-react';
+import { HelpCircle, Plus, Clock, Users, Award, Settings2 } from 'lucide-react';
 
 export default function QuizzesPage() {
   const { data: quizzes } = useQuery({ 
@@ -17,66 +17,70 @@ export default function QuizzesPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Quizzes</h1>
-          <p className="text-muted-foreground mt-2">Manage multiple-choice quizzes and assessments.</p>
+          <h2 className="text-2xl font-bold tracking-tight text-foreground">Continuous Quizzes</h2>
+          <p className="text-xs text-muted-foreground mt-0.5">Manage objective assessments, question pools, and student evaluations</p>
         </div>
-        <Button className="gap-2">
+        <Button size="sm" className="h-9 gap-1.5">
           <Plus className="w-4 h-4" />
-          Create Quiz
+          Create New Quiz
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {quizzes?.map((quiz) => (
-          <Card key={quiz.id} className="flex flex-col">
-            <CardHeader className="pb-4 border-b bg-muted/20">
-              <div className="flex justify-between items-start">
-                <Badge variant={quiz.isPublished ? 'default' : 'secondary'} className="mb-3">
-                  {quiz.isPublished ? 'Published' : 'Draft'}
+          <Card key={quiz.id} className="border border-border/70 hover:border-border transition-all shadow-xs flex flex-col justify-between">
+            <CardHeader className="p-5 pb-4 border-b border-border/70 bg-muted/20">
+              <div className="flex justify-between items-start mb-2">
+                <Badge variant={quiz.isPublished ? 'success' : 'secondary'} className="text-[10px]">
+                  {quiz.isPublished ? 'Published' : 'Draft Mode'}
                 </Badge>
-                <Button variant="ghost" size="icon" className="h-8 w-8 -mr-2 -mt-2">
-                  <Settings2 className="w-4 h-4 text-muted-foreground" />
+                <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg text-muted-foreground hover:text-foreground">
+                  <Settings2 className="w-3.5 h-3.5" />
                 </Button>
               </div>
-              <CardTitle className="text-xl line-clamp-1">{quiz.title}</CardTitle>
-              <CardDescription>{quiz.courseCode} • {quiz.courseName}</CardDescription>
+              <CardTitle className="text-base font-semibold text-foreground line-clamp-1">{quiz.title}</CardTitle>
+              <CardDescription className="text-xs">{quiz.courseCode} • {quiz.courseName}</CardDescription>
             </CardHeader>
-            <CardContent className="pt-6 flex-1 flex flex-col justify-between space-y-6">
-              
-              <div className="grid grid-cols-2 gap-y-4 text-sm">
+
+            <CardContent className="p-5 flex-1 flex flex-col justify-between space-y-5">
+              <div className="grid grid-cols-2 gap-y-3 gap-x-2 text-xs">
                 <div className="flex items-center gap-2 text-muted-foreground">
-                  <HelpCircle className="w-4 h-4" />
+                  <HelpCircle className="w-3.5 h-3.5 text-primary" />
                   <span>{quiz.questions?.length || 0} Questions</span>
                 </div>
                 <div className="flex items-center gap-2 text-muted-foreground">
-                  <Clock className="w-4 h-4" />
+                  <Clock className="w-3.5 h-3.5 text-primary" />
                   <span>{quiz.duration} Mins</span>
                 </div>
                 <div className="flex items-center gap-2 text-muted-foreground">
-                  <PlayCircle className="w-4 h-4" />
+                  <Award className="w-3.5 h-3.5 text-primary" />
                   <span>{quiz.totalPoints} Points</span>
                 </div>
                 <div className="flex items-center gap-2 text-muted-foreground">
-                  <Users className="w-4 h-4" />
-                  <span>{quiz.attemptsCount || 0} Attempts</span>
+                  <Users className="w-3.5 h-3.5 text-primary" />
+                  <span>{quiz.attemptsCount || 0} Submissions</span>
                 </div>
               </div>
 
-              <div className="pt-4 border-t flex gap-3">
-                <Button variant="outline" className="flex-1">View Results</Button>
-                <Button className="flex-1">Edit</Button>
+              <div className="pt-3 border-t border-border/60 flex gap-2">
+                <Button variant="outline" size="sm" className="flex-1 h-8 text-xs">
+                  Review Scores
+                </Button>
+                <Button size="sm" className="flex-1 h-8 text-xs">
+                  Edit Questions
+                </Button>
               </div>
             </CardContent>
           </Card>
         ))}
 
         {(!quizzes || quizzes.length === 0) && (
-          <div className="col-span-full py-12 text-center text-muted-foreground flex flex-col items-center">
-            <div className="p-4 rounded-full bg-muted/50 mb-4">
-              <HelpCircle className="w-8 h-8 opacity-50" />
+          <div className="col-span-full py-16 text-center text-muted-foreground flex flex-col items-center border border-border/70 rounded-2xl bg-card">
+            <div className="w-12 h-12 rounded-2xl bg-muted/60 flex items-center justify-center mb-3">
+              <HelpCircle className="w-6 h-6 text-muted-foreground" />
             </div>
-            <p className="font-medium text-lg">No quizzes found</p>
-            <p className="text-sm mt-1">Create your first quiz to evaluate students.</p>
+            <p className="font-semibold text-sm text-foreground">No quizzes created yet</p>
+            <p className="text-xs text-muted-foreground mt-1">Click &quot;Create New Quiz&quot; above to add your first assessment.</p>
           </div>
         )}
       </div>

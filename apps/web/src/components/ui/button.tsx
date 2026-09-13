@@ -4,25 +4,25 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-medium ring-offset-background transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary disabled:pointer-events-none disabled:opacity-50 active:scale-[0.99]",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm shadow-primary/20",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm",
-        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent/50 hover:text-accent-foreground",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-xs",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-xs",
+        outline: "border border-border/80 bg-background hover:bg-muted/60 text-foreground shadow-xs",
+        secondary: "bg-muted/80 text-foreground hover:bg-muted",
+        ghost: "hover:bg-muted/60 text-muted-foreground hover:text-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        success: "bg-success text-success-foreground hover:bg-success/90 shadow-sm",
-        warning: "bg-warning text-warning-foreground hover:bg-warning/90",
-        glow: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-primary/30 hover:shadow-primary/50",
+        success: "bg-emerald-600 text-white hover:bg-emerald-700 shadow-xs",
+        warning: "bg-amber-600 text-white hover:bg-amber-700 shadow-xs",
+        glow: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-xs",
       },
       size: {
         default: "h-10 px-4 py-2",
-        sm: "h-9 px-3",
-        lg: "h-11 px-8",
-        icon: "h-10 w-10",
+        sm: "h-8 px-3 text-xs rounded-lg",
+        lg: "h-11 px-6 rounded-xl",
+        icon: "h-9 w-9 rounded-xl",
       },
     },
     defaultVariants: {

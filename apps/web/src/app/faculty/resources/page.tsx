@@ -16,10 +16,10 @@ export default function ResourcesPage() {
 
   const getIcon = (type: string) => {
     switch (type) {
-      case 'video': return <Video className="w-8 h-8 text-rose-500" />;
-      case 'image': return <FileImage className="w-8 h-8 text-amber-500" />;
-      case 'archive': return <FileArchive className="w-8 h-8 text-slate-500" />;
-      default: return <FileText className="w-8 h-8 text-blue-500" />;
+      case 'video': return <Video className="w-5 h-5 text-rose-500" />;
+      case 'image': return <FileImage className="w-5 h-5 text-amber-500" />;
+      case 'archive': return <FileArchive className="w-5 h-5 text-slate-500" />;
+      default: return <FileText className="w-5 h-5 text-blue-500" />;
     }
   };
 
@@ -27,36 +27,38 @@ export default function ResourcesPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Learning Resources</h1>
-          <p className="text-muted-foreground mt-2">Manage and upload study materials for your courses.</p>
+          <h2 className="text-2xl font-bold tracking-tight text-foreground">Course Materials & Handouts</h2>
+          <p className="text-xs text-muted-foreground mt-0.5">Upload and distribute syllabus materials, lab manuals, and presentation slides</p>
         </div>
-        <Button className="gap-2">
+        <Button size="sm" className="h-9 gap-1.5">
           <Plus className="w-4 h-4" />
           Upload Material
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {resources?.map((resource) => (
-          <Card key={resource.id} className="hover:border-primary/50 transition-colors">
-            <CardHeader className="flex flex-row items-start justify-between gap-4 pb-2">
-              <div className="p-3 bg-muted/50 rounded-xl">
+          <Card key={resource.id} className="border border-border/70 hover:border-border transition-all shadow-xs flex flex-col justify-between">
+            <CardHeader className="flex flex-row items-start justify-between gap-4 p-5 pb-3">
+              <div className="w-10 h-10 bg-muted/70 rounded-xl flex items-center justify-center border border-border/60 shrink-0">
                 {getIcon(resource.type || 'document')}
               </div>
-              <Badge variant="outline" className="text-xs">{resource.courseCode}</Badge>
+              <Badge variant="outline" className="text-[10px]">{resource.courseCode}</Badge>
             </CardHeader>
-            <CardContent>
-              <h3 className="font-semibold text-lg line-clamp-1">{resource.title}</h3>
-              <CardDescription className="line-clamp-2 mt-1 mb-4 h-10">
-                {resource.description || 'No description provided.'}
-              </CardDescription>
+            <CardContent className="p-5 pt-0 flex-1 flex flex-col justify-between space-y-4">
+              <div>
+                <h3 className="font-semibold text-sm text-foreground line-clamp-1">{resource.title}</h3>
+                <CardDescription className="line-clamp-2 mt-1 text-xs">
+                  {resource.description || 'No additional notes provided for this file.'}
+                </CardDescription>
+              </div>
               
-              <div className="flex items-center justify-between mt-auto">
-                <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md">
-                  {resource.fileSize ? (resource.fileSize / 1024 / 1024).toFixed(1) + ' MB' : 'Link'}
+              <div className="flex items-center justify-between pt-3 border-t border-border/60">
+                <span className="text-[10px] font-mono text-muted-foreground px-2 py-0.5 rounded-md bg-muted">
+                  {resource.fileSize ? (resource.fileSize / 1024 / 1024).toFixed(1) + ' MB' : 'Attachment'}
                 </span>
-                <Button variant="ghost" size="sm" className="gap-2 text-primary">
-                  <Download className="w-4 h-4" />
+                <Button variant="outline" size="sm" className="h-7 text-xs gap-1.5">
+                  <Download className="w-3.5 h-3.5" />
                   Download
                 </Button>
               </div>
@@ -67,7 +69,7 @@ export default function ResourcesPage() {
         {(!resources || resources.length === 0) && (
           <div className="col-span-full">
             <EmptyState 
-              title="No resources found" 
+              title="No resources uploaded" 
               description="Upload materials to share with your students." 
               actionLabel="Upload Material" 
             />

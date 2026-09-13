@@ -17,76 +17,75 @@ export default function CodingExamsPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Coding Exams</h1>
-          <p className="text-muted-foreground mt-2">Manage practical programming assessments.</p>
+          <h2 className="text-2xl font-bold tracking-tight text-foreground">Coding Lab Assessments</h2>
+          <p className="text-xs text-muted-foreground mt-0.5">Manage automated coding environments, test cases, and lab challenges</p>
         </div>
-        <Button className="gap-2">
+        <Button size="sm" className="h-9 gap-1.5">
           <Plus className="w-4 h-4" />
           Create Exam
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {exams?.map((exam) => (
-          <Card key={exam.id} className="flex flex-col overflow-hidden border-border/60">
-            <div className="h-2 bg-gradient-to-r from-teal-500 to-emerald-500" />
-            <CardHeader className="pb-4">
-              <div className="flex justify-between items-start">
-                <Badge variant={exam.isPublished ? 'default' : 'secondary'} className="mb-2">
-                  {exam.isPublished ? 'Live' : 'Draft'}
+          <Card key={exam.id} className="border border-border/70 hover:border-border transition-all shadow-xs flex flex-col justify-between">
+            <CardHeader className="p-5 pb-4 border-b border-border/70 bg-muted/20">
+              <div className="flex justify-between items-start mb-2">
+                <Badge variant={exam.isPublished ? 'success' : 'secondary'} className="text-[10px]">
+                  {exam.isPublished ? 'Live Session' : 'Draft'}
                 </Badge>
               </div>
-              <CardTitle className="text-xl line-clamp-1">{exam.title}</CardTitle>
-              <CardDescription className="flex items-center gap-2 mt-1">
-                <span>{exam.courseCode}</span>
-                <span>•</span>
-                <span>{exam.courseName}</span>
+              <CardTitle className="text-base font-semibold text-foreground line-clamp-1">{exam.title}</CardTitle>
+              <CardDescription className="text-xs mt-1">
+                {exam.courseCode} • {exam.courseName}
               </CardDescription>
             </CardHeader>
-            <CardContent className="pt-2 flex-1 flex flex-col justify-between space-y-6">
-              
-              <div className="space-y-3 text-sm">
-                <div className="flex items-center gap-3 text-muted-foreground">
-                  <TerminalSquare className="w-4 h-4 text-primary" />
-                  <span>{exam.problems?.length || 0} Problems</span>
+
+            <CardContent className="p-5 flex-1 flex flex-col justify-between space-y-5">
+              <div className="space-y-2.5 text-xs text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <TerminalSquare className="w-3.5 h-3.5 text-primary" />
+                  <span>{exam.problems?.length || 0} Algorithmic Problems</span>
                 </div>
-                <div className="flex items-center gap-3 text-muted-foreground">
-                  <Clock className="w-4 h-4 text-primary" />
-                  <span>{exam.duration} Minutes</span>
+                <div className="flex items-center gap-2">
+                  <Clock className="w-3.5 h-3.5 text-primary" />
+                  <span>{exam.duration} Minutes Duration</span>
                 </div>
-                <div className="flex items-center gap-3 text-muted-foreground">
-                  <Calendar className="w-4 h-4 text-primary" />
-                  <span>{new Date(exam.startTime || Date.now()).toLocaleDateString()}</span>
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-3.5 h-3.5 text-primary" />
+                  <span>Scheduled: {new Date(exam.startTime || Date.now()).toLocaleDateString()}</span>
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-2 pt-2">
-                {exam.allowedLanguages?.map(lang => (
-                  <Badge key={lang} variant="outline" className="text-[10px] uppercase bg-muted/30">
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {exam.allowedLanguages?.map((lang) => (
+                  <span key={lang} className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-md bg-muted text-muted-foreground border border-border/60">
                     {lang}
-                  </Badge>
+                  </span>
                 ))}
               </div>
 
-              <div className="pt-4 border-t flex gap-3">
-                <Button variant="outline" className="flex-1 gap-2">
-                  <PlaySquare className="w-4 h-4" />
+              <div className="pt-3 border-t border-border/60 flex gap-2">
+                <Button variant="outline" size="sm" className="flex-1 h-8 text-xs gap-1.5">
+                  <PlaySquare className="w-3.5 h-3.5" />
                   Submissions
                 </Button>
-                <Button className="flex-1">Configure</Button>
+                <Button size="sm" className="flex-1 h-8 text-xs">
+                  Configure
+                </Button>
               </div>
             </CardContent>
           </Card>
         ))}
 
         {(!exams || exams.length === 0) && (
-          <div className="col-span-full py-16 text-center text-muted-foreground flex flex-col items-center border-2 border-dashed border-border/50 rounded-xl">
-            <div className="p-4 rounded-full bg-muted/50 mb-4">
-              <Code2 className="w-8 h-8 opacity-50" />
+          <div className="col-span-full py-16 text-center text-muted-foreground flex flex-col items-center border border-border/70 rounded-2xl bg-card">
+            <div className="w-12 h-12 rounded-2xl bg-muted/60 flex items-center justify-center mb-3">
+              <Code2 className="w-6 h-6 text-muted-foreground" />
             </div>
-            <p className="font-medium text-lg text-foreground">No coding exams yet</p>
-            <p className="text-sm mt-1 max-w-sm">Create hands-on programming assessments with automated test case evaluation.</p>
-            <Button className="mt-6 gap-2" variant="outline">
+            <p className="font-semibold text-sm text-foreground">No coding exams configured</p>
+            <p className="text-xs text-muted-foreground mt-1 max-w-sm">Create hands-on programming assessments with automated test case evaluation.</p>
+            <Button size="sm" className="mt-4 gap-1.5" variant="outline">
               <Plus className="w-4 h-4" />
               Create your first exam
             </Button>
