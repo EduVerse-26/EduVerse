@@ -8,12 +8,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { MessageCircle, Send, Phone, Video, Calendar } from 'lucide-react';
-import { getInitials, getRelativeTime, formatDate } from '@eduverse/utils';
+import { MessageCircle, Send, Calendar, CheckCircle, Clock } from 'lucide-react';
+import { getRelativeTime, formatDate } from '@eduverse/utils';
 
 export default function StudentCounselingPage() {
   const [message, setMessage] = useState('');
-  
+
   const { data: messages, refetch } = useQuery({
     queryKey: ['chatMessages', 'usr-stu-1', 'usr-fac-1'],
     queryFn: () => getChatMessages('usr-stu-1', 'usr-fac-1'),
@@ -35,73 +35,101 @@ export default function StudentCounselingPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold">Counseling</h2>
-        <p className="text-muted-foreground">Chat with your assigned counselor</p>
+        <h2 className="text-2xl font-bold tracking-tight text-foreground">Mentorship & Counseling</h2>
+        <p className="text-xs text-muted-foreground mt-0.5">Direct communication channel with your designated academic mentor</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Chat */}
-        <Card className="lg:col-span-2 flex flex-col h-[600px]">
-          <CardHeader className="border-b border-border pb-4">
+        {/* Chat Panel */}
+        <Card className="lg:col-span-2 flex flex-col h-[600px] border border-border/70 shadow-xs">
+          <CardHeader className="border-b border-border/70 py-3.5 px-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Avatar>
-                  <AvatarFallback>SV</AvatarFallback>
+                <Avatar className="h-9 w-9 rounded-xl border border-border/70">
+                  <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">SV</AvatarFallback>
                 </Avatar>
                 <div>
-                  <CardTitle className="text-base">Prof. Sunita Verma</CardTitle>
-                  <div className="flex items-center gap-1.5">
+                  <CardTitle className="text-sm font-semibold text-foreground">Prof. Sunita Verma</CardTitle>
+                  <div className="flex items-center gap-1.5 mt-0.5">
                     <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                    <span className="text-xs text-muted-foreground">Online</span>
+                    <span className="text-[11px] text-muted-foreground">Faculty Mentor • Available</span>
                   </div>
                 </div>
               </div>
             </div>
           </CardHeader>
-          <CardContent className="flex-1 overflow-y-auto p-4 space-y-4">
-            {messages?.map(msg => (
-              <div key={msg.id} className={`flex ${msg.senderRole === 'student' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[75%] rounded-2xl px-4 py-2.5 ${
-                  msg.senderRole === 'student'
-                    ? 'bg-primary text-primary-foreground rounded-br-md'
-                    : 'bg-muted rounded-bl-md'
-                }`}>
-                  <p className="text-sm">{msg.content}</p>
-                  <p className={`text-[10px] mt-1 ${msg.senderRole === 'student' ? 'text-primary-foreground/60' : 'text-muted-foreground'}`}>
-                    {getRelativeTime(msg.timestamp)}
-                  </p>
+
+          <CardContent className="flex-1 overflow-y-auto p-4 md:p-6 space-y-3.5 bg-background/50">
+            {messages?.map((msg) => {
+              const isStudent = msg.senderRole === 'student';
+              return (
+                <div key={msg.id} className={`flex ${isStudent ? 'justify-end' : 'justify-start'}`}>
+                  <div
+                    className={`max-w-[80%] rounded-2xl px-4 py-2.5 shadow-xs ${
+                      isStudent
+                        ? 'bg-primary text-primary-foreground rounded-br-sm'
+                        : 'bg-muted/70 text-foreground border border-border/60 rounded-bl-sm'
+                    }`}
+                  >
+                    <p className="text-xs leading-relaxed">{msg.content}</p>
+                    <p className={`text-[10px] mt-1 text-right ${isStudent ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
+                      {getRelativeTime(msg.timestamp)}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </CardContent>
-          <div className="p-4 border-t border-border">
-            <form onSubmit={(e) => { e.preventDefault(); if (message.trim()) sendMutation.mutate(message); }} className="flex gap-2">
-              <Input value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Type a message..." className="flex-1" />
-              <Button type="submit" size="icon" disabled={!message.trim() || sendMutation.isPending}>
+
+          <div className="p-4 border-t border-border/70 bg-card rounded-b-2xl">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (message.trim()) sendMutation.mutate(message);
+              }}
+              className="flex items-center gap-2"
+            >
+              <Input
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Write your message to mentor..."
+                className="flex-1 h-10"
+              />
+              <Button type="submit" size="icon" disabled={!message.trim() || sendMutation.isPending} className="h-10 w-10 shrink-0">
                 <Send className="w-4 h-4" />
               </Button>
             </form>
           </div>
         </Card>
 
-        {/* Session History */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
+        {/* Counseling Sessions History */}
+        <Card className="border border-border/70 shadow-xs">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-semibold flex items-center gap-2 text-foreground">
               <Calendar className="w-4 h-4 text-primary" />
-              Session History
+              Counseling Log & Notes
             </CardTitle>
+            <p className="text-xs text-muted-foreground">Recorded reviews and academic follow-ups</p>
           </CardHeader>
           <CardContent className="space-y-3">
-            {sessions?.map(session => (
-              <div key={session.id} className="p-3 rounded-lg border border-border/50 space-y-1">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium">{session.topic}</p>
-                  <Badge variant={session.status === 'completed' ? 'success' : 'info'} className="text-[10px]">{session.status}</Badge>
+            {sessions?.map((session) => (
+              <div key={session.id} className="p-3.5 rounded-xl border border-border/70 bg-muted/20 space-y-2">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-xs font-semibold text-foreground truncate">{session.topic}</p>
+                  <Badge variant={session.status === 'completed' ? 'success' : 'info'} className="text-[10px] capitalize">
+                    {session.status}
+                  </Badge>
                 </div>
-                <p className="text-xs text-muted-foreground">{formatDate(session.date)}</p>
-                <p className="text-xs text-muted-foreground line-clamp-2">{session.observation}</p>
-                {session.followUp && <p className="text-xs text-primary">Follow-up: {session.followUp}</p>}
+                <p className="text-[11px] text-muted-foreground flex items-center gap-1">
+                  <Clock className="w-3 h-3" />
+                  {formatDate(session.date)}
+                </p>
+                <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">{session.observation}</p>
+                {session.followUp && (
+                  <div className="pt-1 border-t border-border/40">
+                    <p className="text-[11px] font-medium text-primary">Action Item: {session.followUp}</p>
+                  </div>
+                )}
               </div>
             ))}
           </CardContent>

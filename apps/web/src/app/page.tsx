@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { ROLE_DASHBOARD_PATHS } from '@eduverse/config';
+import { GraduationCap } from 'lucide-react';
 
 export default function HomePage() {
   const { user, isAuthenticated, isLoading } = useAuth();
@@ -22,10 +23,10 @@ export default function HomePage() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
       <div className="flex flex-col items-center gap-4">
-        <div className="w-12 h-12 rounded-xl gradient-primary animate-pulse-glow flex items-center justify-center">
-          <span className="text-2xl">🎓</span>
+        <div className="w-12 h-12 rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/25 flex items-center justify-center animate-pulse">
+          <GraduationCap className="w-6 h-6" />
         </div>
-        <p className="text-sm text-muted-foreground animate-pulse">Loading EduVerse...</p>
+        <p className="text-sm font-medium text-muted-foreground animate-pulse">Loading EduVerse...</p>
       </div>
     </div>
   );

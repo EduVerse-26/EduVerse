@@ -10,8 +10,7 @@ import { useAuth } from '@/lib/auth-context';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { GraduationCap, Eye, EyeOff, ArrowRight, Sparkles } from 'lucide-react';
+import { GraduationCap, Eye, EyeOff, ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 const DEMO_ACCOUNTS = [
@@ -37,7 +36,6 @@ export default function LoginPage() {
       const result = await login(data.email, data.password);
       if (result.success) {
         toast.success('Welcome to EduVerse!');
-        // Find role from demo accounts or default
         const account = DEMO_ACCOUNTS.find(a => a.email === data.email);
         router.push(ROLE_DASHBOARD_PATHS[account?.role || 'student']);
       } else {
@@ -60,150 +58,173 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left Panel - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-sidebar">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-secondary/20" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
+    <div className="min-h-screen flex flex-col lg:flex-row bg-background text-foreground selection:bg-primary/10 selection:text-primary">
+      {/* Left Panel - Chic SaaS Brand Showcase */}
+      <div className="hidden lg:flex lg:w-1/2 relative flex-col justify-between p-12 bg-[#0B0F19] text-white border-r border-slate-800/80 overflow-hidden">
+        {/* Subtle geometric background decoration */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.15),_transparent_40%)] pointer-events-none" />
+        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
         
-        {/* Floating decorative elements */}
-        <div className="absolute top-20 left-20 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-secondary/5 rounded-full blur-3xl" />
-        
-        <div className="relative z-10 flex flex-col justify-center px-16">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="flex items-center justify-center w-14 h-14 rounded-2xl gradient-primary shadow-2xl shadow-primary/30">
-              <GraduationCap className="w-8 h-8 text-white" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-white">EduVerse</h1>
-              <p className="text-sm text-white/50 tracking-widest uppercase">Campus Platform</p>
-            </div>
+        {/* Top brand header */}
+        <div className="relative z-10 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center font-bold shadow-md shadow-primary/30">
+            <GraduationCap className="w-6 h-6" />
           </div>
-          
-          <h2 className="text-4xl font-bold text-white/90 leading-tight mb-6">
-            One platform for<br />
-            <span className="gradient-text">everything academic</span>
+          <div>
+            <h1 className="text-xl font-bold tracking-tight text-white leading-none">EduVerse</h1>
+            <p className="text-[11px] font-medium tracking-wider uppercase text-slate-400 mt-1">Unified Campus OS</p>
+          </div>
+        </div>
+
+        {/* Center editorial message */}
+        <div className="relative z-10 my-auto py-12 max-w-lg">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-400/20 text-blue-400 text-xs font-semibold mb-6">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Next-Gen Academic Management</span>
+          </div>
+
+          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight mb-4">
+            Unified workspace for modern campus administration.
           </h2>
           
-          <p className="text-lg text-white/60 max-w-md leading-relaxed mb-10">
-            Unifying attendance, timetables, assignments, quizzes, coding exams, marks, performance analytics, and counseling — all in one place.
+          <p className="text-slate-400 text-base leading-relaxed mb-8">
+            Effortlessly coordinate curriculum, automated attendance, coding assessments, student counseling, and department analytics in a clean, unified interface.
           </p>
 
-          <div className="grid grid-cols-2 gap-3 max-w-md">
-            {['Attendance Tracking', 'Live Coding Exams', 'Smart Analytics', 'Student Counseling'].map((feature) => (
-              <div key={feature} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10">
-                <Sparkles className="w-4 h-4 text-primary" />
-                <span className="text-sm text-white/70">{feature}</span>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              'Real-Time Attendance',
+              'Monaco Coding IDE',
+              'Course Management',
+              'Student Counseling',
+            ].map((feature) => (
+              <div key={feature} className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-slate-800/50 border border-slate-700/60 text-slate-300 text-xs font-medium">
+                <CheckCircle2 className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                <span>{feature}</span>
               </div>
             ))}
           </div>
         </div>
+
+        {/* Footer info */}
+        <div className="relative z-10 flex items-center justify-between text-xs text-slate-500 border-t border-slate-800/80 pt-6">
+          <p>© {new Date().getFullYear()} EduVerse Platform Inc.</p>
+          <p className="text-slate-400">Project Management Edition</p>
+        </div>
       </div>
 
-      {/* Right Panel - Login Form */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-background">
-        <div className="w-full max-w-md space-y-8">
+      {/* Right Panel - Clean Minimal Login Form */}
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
+        <div className="w-full max-w-md space-y-6">
           {/* Mobile Logo */}
-          <div className="lg:hidden flex items-center gap-3 justify-center mb-4">
-            <div className="flex items-center justify-center w-10 h-10 rounded-xl gradient-primary">
-              <GraduationCap className="w-6 h-6 text-white" />
+          <div className="lg:hidden flex items-center gap-3 justify-center mb-6">
+            <div className="w-10 h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center font-bold shadow-md shadow-primary/20">
+              <GraduationCap className="w-6 h-6" />
             </div>
-            <span className="text-2xl font-bold">EduVerse</span>
+            <div>
+              <span className="text-xl font-bold tracking-tight text-foreground">EduVerse</span>
+              <p className="text-[10px] uppercase font-semibold text-muted-foreground tracking-wider">Campus OS</p>
+            </div>
           </div>
 
           <div className="text-center lg:text-left">
-            <h2 className="text-2xl font-bold">Welcome back</h2>
-            <p className="text-muted-foreground mt-1">Sign in to your account to continue</p>
+            <h2 className="text-2xl font-bold tracking-tight text-foreground">Sign in to EduVerse</h2>
+            <p className="text-sm text-muted-foreground mt-1">Select a demo role or enter your credentials to continue.</p>
           </div>
 
           {/* Quick Access - Demo Roles */}
-          <div>
-            <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wider font-medium">Quick access — Demo</p>
-            <div className="grid grid-cols-2 gap-2">
+          <div className="space-y-2.5">
+            <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Quick Demo Access</p>
+            <div className="grid grid-cols-2 gap-2.5">
               {DEMO_ACCOUNTS.map((account) => (
-                <Button
+                <button
                   key={account.role}
-                  variant="outline"
-                  className="h-auto py-3 px-4 flex flex-col items-start gap-0.5 hover:border-primary/50 hover:bg-primary/5 transition-all"
+                  type="button"
+                  className="p-3 text-left rounded-xl border border-border/70 bg-card hover:border-primary/50 hover:bg-muted/40 transition-all duration-150 shadow-xs flex flex-col justify-between group"
                   onClick={() => quickLogin(account)}
                   disabled={isSubmitting}
                 >
-                  <span className="text-lg">{account.icon}</span>
-                  <span className="text-sm font-medium">{account.label}</span>
-                  <span className="text-[10px] text-muted-foreground truncate w-full">{account.email}</span>
-                </Button>
+                  <div className="flex items-center justify-between w-full mb-1">
+                    <span className="text-base">{account.icon}</span>
+                    <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded bg-muted/60 text-muted-foreground group-hover:text-primary group-hover:bg-primary/10 transition-colors">
+                      Demo
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-foreground group-hover:text-primary transition-colors">{account.label}</p>
+                    <p className="text-[10px] text-muted-foreground truncate w-full mt-0.5">{account.email}</p>
+                  </div>
+                </button>
               ))}
             </div>
           </div>
 
-          <div className="relative">
+          <div className="relative py-1">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-border" />
+              <div className="w-full border-t border-border/70" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">or sign in with email</span>
+              <span className="bg-background px-3 text-muted-foreground font-medium">or continue with email</span>
             </div>
           </div>
 
           {/* Login Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="email" className="text-xs font-semibold text-foreground">Email Address</Label>
               <Input
                 id="email"
                 type="email"
                 placeholder="your.email@eduverse.edu"
                 {...register('email')}
-                className={errors.email ? 'border-destructive' : ''}
+                className={`h-10 rounded-xl border-border/80 text-sm shadow-xs ${errors.email ? 'border-destructive' : ''}`}
               />
               {errors.email && (
-                <p className="text-xs text-destructive">{errors.email.message}</p>
+                <p className="text-xs text-destructive mt-1">{errors.email.message}</p>
               )}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="password" className="text-xs font-semibold text-foreground">Password</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Enter your password"
                   {...register('password')}
-                  className={errors.password ? 'border-destructive' : ''}
+                  className={`h-10 rounded-xl border-border/80 text-sm shadow-xs pr-10 ${errors.password ? 'border-destructive' : ''}`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
               {errors.password && (
-                <p className="text-xs text-destructive">{errors.password.message}</p>
+                <p className="text-xs text-destructive mt-1">{errors.password.message}</p>
               )}
             </div>
 
             <Button
               type="submit"
-              className="w-full"
-              variant="glow"
+              className="w-full h-10 rounded-xl text-sm font-semibold shadow-xs"
               disabled={isSubmitting}
             >
               {isSubmitting ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
               ) : (
-                <>
-                  Sign In
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </>
+                <div className="flex items-center justify-center gap-2">
+                  <span>Sign In</span>
+                  <ArrowRight className="w-4 h-4" />
+                </div>
               )}
             </Button>
           </form>
 
-          <p className="text-xs text-center text-muted-foreground">
-            Use any demo account above to explore the platform. All data is mocked.
+          <p className="text-xs text-center text-muted-foreground pt-2">
+            Tip: Click any demo role badge above for instant single-click entry.
           </p>
         </div>
       </div>

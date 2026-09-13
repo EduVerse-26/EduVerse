@@ -18,29 +18,30 @@ export default function TimetablePage() {
   });
 
   const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+  const today = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Master Timetable</h1>
-          <p className="text-muted-foreground mt-2">View department schedules across batches and sections.</p>
+          <h2 className="text-2xl font-bold tracking-tight text-foreground">Department Master Timetable</h2>
+          <p className="text-xs text-muted-foreground mt-0.5">Comprehensive schedule overview across batches, faculty, and lecture halls</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex items-center gap-2">
           <Select value={batch} onValueChange={setBatch}>
-            <SelectTrigger className="w-[120px]">
+            <SelectTrigger className="w-[120px] h-9 text-xs rounded-xl">
               <SelectValue placeholder="Batch" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="rounded-xl text-xs">
               <SelectItem value="2024">Batch 2024</SelectItem>
               <SelectItem value="2025">Batch 2025</SelectItem>
             </SelectContent>
           </Select>
           <Select value={section} onValueChange={setSection}>
-            <SelectTrigger className="w-[120px]">
+            <SelectTrigger className="w-[120px] h-9 text-xs rounded-xl">
               <SelectValue placeholder="Section" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="rounded-xl text-xs">
               <SelectItem value="A">Section A</SelectItem>
               <SelectItem value="B">Section B</SelectItem>
             </SelectContent>
@@ -48,52 +49,65 @@ export default function TimetablePage() {
         </div>
       </div>
 
-      <div className="grid gap-6">
+      <div className="space-y-4">
         {days.map((day) => {
-          const daySlots = timetable?.slots?.filter(s => s.day === day).sort((a, b) => a.period - b.period) || [];
-          
+          const daySlots = timetable?.slots?.filter((s) => s.day === day).sort((a, b) => a.period - b.period) || [];
           if (daySlots.length === 0) return null;
-          
+          const isToday = day === today;
+
           return (
-            <Card key={day} className="overflow-hidden">
-              <CardHeader className="bg-muted/30 border-b pb-4">
-                <CardTitle className="capitalize text-lg flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-primary" />
+            <Card key={day} className={`border shadow-xs overflow-hidden ${isToday ? 'border-primary/40' : 'border-border/70'}`}>
+              <CardHeader className={`py-3 px-6 border-b flex flex-row items-center justify-between ${isToday ? 'bg-primary/5 border-primary/20' : 'bg-muted/40 border-border/70'}`}>
+                <CardTitle className="capitalize text-sm font-semibold flex items-center gap-2 text-foreground">
+                  <Calendar className="w-4 h-4 text-primary" />
                   {day}
                 </CardTitle>
+                {isToday && (
+                  <Badge variant="default" className="text-[10px] py-0 px-2">
+                    Today
+                  </Badge>
+                )}
               </CardHeader>
               <CardContent className="p-0">
                 <div className="divide-y divide-border/50">
                   {daySlots.map((slot) => (
-                    <div key={slot.id} className="p-4 sm:p-6 flex flex-col sm:flex-row gap-4 sm:items-center hover:bg-muted/10 transition-colors">
-                      <div className="flex items-center sm:items-start flex-row sm:flex-col gap-2 sm:gap-1 min-w-[120px]">
-                        <Badge variant="outline" className="w-fit font-mono">Period {slot.period}</Badge>
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <Clock className="w-3.5 h-3.5 mr-1" />
+                    <div
+                      key={slot.id}
+                      className="p-4 md:p-5 flex flex-col sm:flex-row gap-4 sm:items-center hover:bg-muted/20 transition-colors"
+                    >
+                      <div className="flex items-center sm:items-start flex-row sm:flex-col gap-2 min-w-[130px] shrink-0">
+                        <Badge variant="outline" className="font-mono text-xs text-foreground">
+                          Period {slot.period}
+                        </Badge>
+                        <span className="flex items-center text-xs text-muted-foreground font-mono">
+                          <Clock className="w-3.5 h-3.5 mr-1 text-muted-foreground/70" />
                           {slot.startTime} - {slot.endTime}
-                        </div>
+                        </span>
                       </div>
-                      
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between gap-4">
-                          <div>
-                            <h3 className="font-semibold text-lg">{slot.courseName}</h3>
-                            <p className="text-sm text-muted-foreground">{slot.courseCode}</p>
+
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="min-w-0">
+                            <h3 className="font-semibold text-sm text-foreground truncate">{slot.courseName}</h3>
+                            <p className="text-xs text-muted-foreground">{slot.courseCode}</p>
                           </div>
-                          <Badge variant={slot.type === 'lab' ? 'default' : 'secondary'} className="capitalize">
+                          <Badge
+                            variant={slot.type === 'lab' ? 'info' : 'outline'}
+                            className="text-xs capitalize shrink-0"
+                          >
                             {slot.type}
                           </Badge>
                         </div>
-                        
-                        <div className="flex items-center gap-6 mt-3 text-sm text-muted-foreground">
-                          <div className="flex items-center gap-1.5">
-                            <MapPin className="w-4 h-4" />
+
+                        <div className="flex flex-wrap items-center gap-4 mt-2 text-xs text-muted-foreground">
+                          <span className="flex items-center gap-1.5">
+                            <MapPin className="w-3.5 h-3.5 text-muted-foreground/70" />
                             Room {slot.room}
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <UserCircle className="w-4 h-4" />
+                          </span>
+                          <span className="flex items-center gap-1.5">
+                            <UserCircle className="w-3.5 h-3.5 text-muted-foreground/70" />
                             {slot.facultyName}
-                          </div>
+                          </span>
                         </div>
                       </div>
                     </div>
