@@ -10,11 +10,11 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@eduverse/api": "workspace:*",
-    "@eduverse/config": "workspace:*",
-    "@eduverse/types": "workspace:*",
-    "@eduverse/utils": "workspace:*",
-    "@eduverse/validation": "workspace:*",
+    "@eduverse/api": "*",
+    "@eduverse/config": "*",
+    "@eduverse/types": "*",
+    "@eduverse/utils": "*",
+    "@eduverse/validation": "*",
     "@hookform/resolvers": "^3.9.0",
     "@monaco-editor/react": "^4.6.0",
     "@radix-ui/react-alert-dialog": "^1.1.0",

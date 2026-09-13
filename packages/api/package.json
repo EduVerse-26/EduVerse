@@ -8,10 +8,10 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@eduverse/types": "workspace:*",
-    "@eduverse/config": "workspace:*",
-    "@eduverse/utils": "workspace:*",
-    "@eduverse/validation": "workspace:*"
+    "@eduverse/types": "*",
+    "@eduverse/config": "*",
+    "@eduverse/utils": "*",
+    "@eduverse/validation": "*"
   },
   "devDependencies": {
     "typescript": "^5.6.0"
