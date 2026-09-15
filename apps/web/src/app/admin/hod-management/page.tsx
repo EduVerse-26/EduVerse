@@ -1,23 +1,49 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
-import { getDepartments, getFacultyList } from '@eduverse/api';
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { getAdminDepartments, getAdminUsers, updateAdminDepartment } from '@eduverse/api';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { UserCog, Plus, Shield, CheckCircle2, AlertCircle } from 'lucide-react';
 import { EmptyState } from '@/components/empty-state';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function HodManagementPage() {
-  const { data: departments } = useQuery({ 
-    queryKey: ['adminDepartments'], 
-    queryFn: () => getDepartments() 
+  const queryClient = useQueryClient();
+  const [selectedDeptId, setSelectedDeptId] = useState<string | null>(null);
+  const [selectedFacultyId, setSelectedFacultyId] = useState<string>('');
+
+  const { data: departments, isLoading: depsLoading } = useQuery({
+    queryKey: ['adminDepartments'],
+    queryFn: () => getAdminDepartments() 
   });
 
-  const { data: facultyList } = useQuery({ 
-    queryKey: ['adminFaculty'], 
-    queryFn: () => getFacultyList() 
+  const { data: hods, isLoading: hodsLoading } = useQuery({
+    queryKey: ['adminAllUsers'],
+    queryFn: () => getAdminUsers(),
+    select: (users) => users.filter(user => user.role === 'hod' && user.isActive)
   });
+
+  const assignHodMutation = useMutation({
+    mutationFn: async ({ deptId, hodId, hodName }: { deptId: string, hodId: string, hodName: string }) => {
+      return updateAdminDepartment(deptId, { hodId, hodName });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['adminDepartments'] });
+      setSelectedDeptId(null);
+      setSelectedFacultyId('');
+    }
+  });
+
+  const handleAssign = () => {
+    if (!selectedDeptId || !selectedFacultyId) return;
+    const hodUser = hods?.find(u => u.id === selectedFacultyId);
+    if (!hodUser) return;
+    assignHodMutation.mutate({ deptId: selectedDeptId, hodId: hodUser.id, hodName: hodUser.name });
+  };
 
   return (
     <div className="space-y-6">
@@ -30,7 +56,7 @@ export default function HodManagementPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5">
         {departments?.map((dept) => {
-          const currentHod = facultyList?.find(f => f.userId === dept.hodId);
+          const currentHod = hods?.find(u => u.id === dept.hodId);
           
           return (
             <Card key={dept.id} className="flex flex-col rounded-2xl border-border/70 bg-card shadow-xs hover:border-border transition-all duration-200">
@@ -75,6 +101,10 @@ export default function HodManagementPage() {
                 <Button 
                   variant={currentHod ? 'outline' : 'default'} 
                   className="w-full gap-2 rounded-xl text-sm font-medium shadow-xs"
+                  onClick={() => {
+                    setSelectedDeptId(dept.id);
+                    setSelectedFacultyId(currentHod?.id || '');
+                  }}
                 >
                   <UserCog className="w-4 h-4" />
                   {currentHod ? 'Change HOD' : 'Assign HOD'}
@@ -95,6 +125,40 @@ export default function HodManagementPage() {
           </div>
         )}
       </div>
+
+      <Dialog open={!!selectedDeptId} onOpenChange={(open) => !open && setSelectedDeptId(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Assign Head of Department</DialogTitle>
+            <DialogDescription>
+              Select a faculty member to lead the department.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <Select value={selectedFacultyId} onValueChange={setSelectedFacultyId}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select HOD profile" />
+              </SelectTrigger>
+              <SelectContent>
+                {hods?.map(user => (
+                  <SelectItem key={user.id} value={user.id}>
+                    {user.name} - {user.email}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSelectedDeptId(null)}>Cancel</Button>
+            <Button 
+              onClick={handleAssign} 
+              disabled={!selectedFacultyId || assignHodMutation.isPending}
+            >
+              {assignHodMutation.isPending ? 'Assigning...' : 'Save Changes'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

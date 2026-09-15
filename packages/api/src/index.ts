@@ -646,7 +646,42 @@ export async function getUnreadCount(userId: string): Promise<number> {
 // Users API (Admin)
 // ============================================================
 
+export async function createUser(input: Partial<User>): Promise<ApiResponse<User>> {
+  await delay(API_DELAY_MS);
+  const newUser: User = {
+    id: generateId(),
+    email: input.email || '',
+    name: input.name || '',
+    role: (input.role as UserRole) || 'student',
+    departmentId: input.departmentId,
+    phone: input.phone || '',
+    createdAt: new Date().toISOString(),
+    isActive: true,
+  };
+  mockUsers.push(newUser);
+  return { data: newUser, success: true };
+}
+
 export async function getAllUsers(): Promise<User[]> {
   await delay(API_DELAY_MS);
   return [...mockUsers];
 }
+
+export async function updateUser(id: string, input: Partial<User>): Promise<ApiResponse<User>> {
+  await delay(API_DELAY_MS);
+  const idx = mockUsers.findIndex(u => u.id === id);
+  if (idx === -1) return { data: null as unknown as User, success: false, error: 'User not found' };
+  mockUsers[idx] = { ...mockUsers[idx], ...input };
+  return { data: mockUsers[idx], success: true };
+}
+
+export async function deleteUser(id: string): Promise<ApiResponse<void>> {
+  await delay(API_DELAY_MS);
+  const idx = mockUsers.findIndex(u => u.id === id);
+  if (idx === -1) return { data: undefined as unknown as void, success: false, error: 'User not found' };
+  mockUsers.splice(idx, 1);
+  return { data: undefined as unknown as void, success: true };
+}
+
+// Export Supabase Admin API 
+export * from './admin-api';
