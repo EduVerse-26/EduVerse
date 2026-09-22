@@ -8,10 +8,12 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@eduverse/types": "*",
     "@eduverse/config": "*",
+    "@eduverse/types": "*",
     "@eduverse/utils": "*",
-    "@eduverse/validation": "*"
+    "@eduverse/validation": "*",
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.116.0"
   },
   "devDependencies": {
     "typescript": "^5.6.0"

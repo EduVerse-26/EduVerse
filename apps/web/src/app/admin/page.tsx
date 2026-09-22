@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { getDepartments, getAllUsers } from '@eduverse/api';
+import { getAdminDepartments, getAdminUsers } from '@eduverse/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -10,13 +10,13 @@ import Link from 'next/link';
 
 export default function AdminDashboard() {
   const { data: departments, isLoading: depsLoading } = useQuery({
-    queryKey: ['departments'],
-    queryFn: getDepartments,
+    queryKey: ['adminDepartments'],
+    queryFn: () => getAdminDepartments(),
   });
 
   const { data: users, isLoading: usersLoading } = useQuery({
-    queryKey: ['users'],
-    queryFn: getAllUsers,
+    queryKey: ['adminAllUsers'],
+    queryFn: () => getAdminUsers(),
   });
 
   const stats = [

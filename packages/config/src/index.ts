@@ -32,7 +32,7 @@ export interface NavItem {
 export const ADMIN_NAV: NavItem[] = [
   { label: 'Dashboard', href: '/admin', icon: 'LayoutDashboard' },
   { label: 'Departments', href: '/admin/departments', icon: 'Building2' },
-  { label: 'HOD Management', href: '/admin/hods', icon: 'UserCog' },
+  { label: 'HOD Management', href: '/admin/hod-management', icon: 'UserCog' },
   { label: 'All Users', href: '/admin/users', icon: 'Users' },
   { label: 'Settings', href: '/admin/settings', icon: 'Settings' },
 ];

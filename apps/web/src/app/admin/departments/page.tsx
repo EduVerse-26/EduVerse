@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { getDepartments, createDepartment, deleteDepartment } from '@eduverse/api';
+import { getAdminDepartments, createAdminDepartment, updateAdminDepartment, deleteAdminDepartment, getAdminUsers } from '@eduverse/api';
 import { createDepartmentSchema, type CreateDepartmentFormData } from '@eduverse/validation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,14 +21,20 @@ export default function DepartmentsPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const { data: departments, isLoading } = useQuery({
-    queryKey: ['departments'],
-    queryFn: getDepartments,
+  const { data: departments, isLoading } = useQuery({ 
+    queryKey: ['adminDepartments'], 
+    queryFn: () => getAdminDepartments() 
   });
 
-  const createMutation = useMutation({
-    mutationFn: (data: CreateDepartmentFormData) => createDepartment(data),
-    onSuccess: () => {
+  const { data: users } = useQuery({
+    queryKey: ['adminAllUsers'],
+    queryFn: () => getAdminUsers()
+  });
+
+  const createDeptMutation = useMutation({
+    mutationFn: async (deptData: any) => {
+      return createAdminDepartment(deptData);
+    },onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['departments'] });
       toast.success('Department created successfully');
       setIsDialogOpen(false);
@@ -36,9 +42,10 @@ export default function DepartmentsPage() {
     },
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: (id: string) => deleteDepartment(id),
-    onSuccess: () => {
+  const deleteDeptMutation = useMutation({
+    mutationFn: async (id: string) => {
+      return deleteAdminDepartment(id);
+    },onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['departments'] });
       toast.success('Department deleted');
     },
@@ -134,7 +141,7 @@ export default function DepartmentsPage() {
                       variant="ghost"
                       size="icon"
                       className="h-7 w-7 rounded-lg text-rose-500 hover:bg-rose-500/10"
-                      onClick={() => deleteMutation.mutate(dept.id)}
+                      onClick={() => deleteDeptMutation.mutate(dept.id)}
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </Button>
@@ -164,7 +171,7 @@ export default function DepartmentsPage() {
             <DialogTitle className="text-base font-semibold">Create Department</DialogTitle>
             <DialogDescription className="text-xs">Add a new academic discipline to institutional records</DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleSubmit((data) => createMutation.mutate(data))} className="space-y-4">
+          <form onSubmit={handleSubmit((data) => createDeptMutation.mutate(data))} className="space-y-4">
             <div className="space-y-1.5">
               <Label htmlFor="name" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Department Name *
@@ -183,8 +190,8 @@ export default function DepartmentsPage() {
               <Button type="button" variant="outline" size="sm" onClick={() => setIsDialogOpen(false)} className="h-9">
                 Cancel
               </Button>
-              <Button type="submit" size="sm" className="h-9" disabled={createMutation.isPending}>
-                {createMutation.isPending ? 'Creating...' : 'Create Department'}
+              <Button type="submit" size="sm" className="h-9" disabled={createDeptMutation.isPending}>
+                {createDeptMutation.isPending ? 'Creating...' : 'Create Department'}
               </Button>
             </DialogFooter>
           </form>

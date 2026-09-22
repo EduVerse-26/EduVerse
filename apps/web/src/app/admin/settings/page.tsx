@@ -5,15 +5,49 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Settings, Save, ShieldCheck, Mail, Database, Check } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { getAdminSettings, updateAdminSettings } from '@eduverse/api';
 
 export default function SettingsPage() {
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('general');
   const [saved, setSaved] = useState(false);
+  const [formData, setFormData] = useState({
+    institution_name: '',
+    contact_email: '',
+    academic_year: ''
+  });
+
+  const { data: settings, isLoading } = useQuery({
+    queryKey: ['adminSettings'],
+    queryFn: () => getAdminSettings()
+  });
+
+  useEffect(() => {
+    if (settings) {
+      setFormData({
+        institution_name: settings.institution_name || '',
+        contact_email: settings.contact_email || '',
+        academic_year: settings.academic_year || ''
+      });
+    }
+  }, [settings]);
+
+  const updateSettingsMutation = useMutation({
+    mutationFn: async (data: any) => {
+      // The settings table has a single row with ID '00000000-0000-0000-0000-000000000000'
+      return updateAdminSettings('00000000-0000-0000-0000-000000000000', data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['adminSettings'] });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    }
+  });
 
   const handleSave = () => {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    updateSettingsMutation.mutate(formData);
   };
 
   return (
@@ -84,15 +118,30 @@ export default function SettingsPage() {
             <CardContent className="px-6 pb-6 space-y-4">
               <div className="grid gap-2">
                 <Label htmlFor="instName" className="text-xs font-semibold text-foreground">Institution Name</Label>
-                <Input id="instName" defaultValue="EduVerse University" className="h-10 rounded-xl border-border/80 text-sm shadow-xs" />
+                <Input 
+                  id="instName" 
+                  value={formData.institution_name}
+                  onChange={(e) => setFormData({ ...formData, institution_name: e.target.value })}
+                  className="h-10 rounded-xl border-border/80 text-sm shadow-xs" 
+                />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="instEmail" className="text-xs font-semibold text-foreground">Contact Email</Label>
-                <Input id="instEmail" defaultValue="admin@eduverse.edu" className="h-10 rounded-xl border-border/80 text-sm shadow-xs" />
+                <Input 
+                  id="instEmail" 
+                  value={formData.contact_email}
+                  onChange={(e) => setFormData({ ...formData, contact_email: e.target.value })}
+                  className="h-10 rounded-xl border-border/80 text-sm shadow-xs" 
+                />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="academicYear" className="text-xs font-semibold text-foreground">Current Academic Year</Label>
-                <Input id="academicYear" defaultValue="2024-2025" className="h-10 rounded-xl border-border/80 text-sm shadow-xs" />
+                <Input 
+                  id="academicYear" 
+                  value={formData.academic_year}
+                  onChange={(e) => setFormData({ ...formData, academic_year: e.target.value })}
+                  className="h-10 rounded-xl border-border/80 text-sm shadow-xs" 
+                />
               </div>
             </CardContent>
           </Card>
@@ -121,11 +170,20 @@ export default function SettingsPage() {
           </Card>
 
           <div className="flex justify-end pt-2">
-            <Button onClick={handleSave} className="gap-2 rounded-xl text-sm font-medium shadow-xs">
+            <Button 
+              onClick={handleSave} 
+              disabled={updateSettingsMutation.isPending || isLoading}
+              className="gap-2 rounded-xl text-sm font-medium shadow-xs"
+            >
               {saved ? (
                 <>
                   <Check className="w-4 h-4 text-emerald-300" />
                   Saved!
+                </>
+              ) : updateSettingsMutation.isPending ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                  Saving...
                 </>
               ) : (
                 <>

@@ -40,11 +40,33 @@ interface DashboardShellProps {
 }
 
 export function DashboardShell({ children, title }: DashboardShellProps) {
-  const { user, logout, switchRole } = useAuth();
+  const { user, logout, isAuthenticated, isLoading } = useAuth();
   const pathname = usePathname();
+  const router = require('next/navigation').useRouter();
   const { theme, setTheme } = useTheme();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Route protection
+  require('react').useEffect(() => {
+    if (!isLoading) {
+      if (!isAuthenticated) {
+        let baseRole = pathname.split('/')[1];
+        const validRoles = ROLES.map(r => r.value);
+        
+        if (!baseRole || !validRoles.includes(baseRole)) {
+          baseRole = 'student'; // Fallback
+        }
+
+        // Ensure we don't end up in an infinite redirect loop
+        if (!pathname.endsWith('/login')) {
+          window.location.href = `/${baseRole}/login`;
+        }
+      } else if (user?.role === 'hod' && user.mustChangePassword && pathname !== '/hod/change-password') {
+        window.location.href = '/hod/change-password';
+      }
+    }
+  }, [isLoading, isAuthenticated, pathname, user]);
 
   const navItems: NavItem[] = (() => {
     switch (user?.role) {
@@ -57,6 +79,15 @@ export function DashboardShell({ children, title }: DashboardShellProps) {
   })();
 
   const roleLabel = ROLES.find(r => r.value === user?.role);
+
+  // Prevent rendering the shell if not authenticated to avoid flashing
+  if (isLoading || !isAuthenticated || (user?.role === 'hod' && user.mustChangePassword)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="w-8 h-8 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
@@ -224,26 +255,7 @@ export function DashboardShell({ children, title }: DashboardShellProps) {
                     {roleLabel?.label}
                   </div>
                 </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <div className="px-2 py-1.5">
-                  <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground mb-1">Switch Role</p>
-                  <div className="grid grid-cols-2 gap-1">
-                    {ROLES.map((r) => (
-                      <button
-                        key={r.value}
-                        onClick={() => switchRole(r.value)}
-                        className={cn(
-                          "flex items-center justify-between px-2 py-1 rounded-lg text-xs transition-colors",
-                          user?.role === r.value ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted text-muted-foreground hover:text-foreground"
-                        )}
-                      >
-                        <span>{r.label}</span>
-                        {user?.role === r.value && <Check className="w-3 h-3" />}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <DropdownMenuSeparator />
+
                 <DropdownMenuItem onClick={logout} className="text-destructive cursor-pointer rounded-xl p-2 focus:bg-destructive/10">
                   <LogOut className="w-4 h-4 mr-2" />
                   Sign Out

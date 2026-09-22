@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, type LoginFormData } from '@eduverse/validation';
@@ -14,7 +14,6 @@ import { GraduationCap, Eye, EyeOff, ArrowRight, Sparkles, CheckCircle2 } from '
 import { toast } from 'sonner';
 
 const DEMO_ACCOUNTS = [
-  { email: 'admin@eduverse.edu', password: 'password', role: 'admin' as const, label: 'Admin', icon: '🏛️' },
   { email: 'hod.cs@eduverse.edu', password: 'password', role: 'hod' as const, label: 'HOD', icon: '📋' },
   { email: 'faculty1@eduverse.edu', password: 'password', role: 'faculty' as const, label: 'Faculty', icon: '👨‍🏫' },
   { email: 'student1@eduverse.edu', password: 'password', role: 'student' as const, label: 'Student', icon: '🎓' },
@@ -22,6 +21,10 @@ const DEMO_ACCOUNTS = [
 
 export default function LoginPage() {
   const router = useRouter();
+  const params = useParams();
+  const currentRole = (params.role as string) || 'student';
+  const roleTitle = currentRole.charAt(0).toUpperCase() + currentRole.slice(1);
+  
   const { login, switchRole } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -33,11 +36,10 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormData) => {
     setIsSubmitting(true);
     try {
-      const result = await login(data.email, data.password);
+      const result = await login(data.email, data.password, currentRole);
       if (result.success) {
-        toast.success('Welcome to EduVerse!');
-        const account = DEMO_ACCOUNTS.find(a => a.email === data.email);
-        router.push(ROLE_DASHBOARD_PATHS[account?.role || 'student']);
+        toast.success(`Welcome to EduVerse ${roleTitle} Portal!`);
+        router.push(ROLE_DASHBOARD_PATHS[currentRole as keyof typeof ROLE_DASHBOARD_PATHS] || '/student');
       } else {
         toast.error(result.error || 'Login failed');
       }
@@ -129,29 +131,29 @@ export default function LoginPage() {
 
           <div className="text-center lg:text-left">
             <h2 className="text-2xl font-bold tracking-tight text-foreground">Sign in to EduVerse</h2>
-            <p className="text-sm text-muted-foreground mt-1">Select a demo role or enter your credentials to continue.</p>
+            <p className="text-sm text-muted-foreground mt-1">{roleTitle} Portal - Enter your credentials to continue.</p>
           </div>
 
           {/* Quick Access - Demo Roles */}
           <div className="space-y-2.5">
             <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Quick Demo Access</p>
             <div className="grid grid-cols-2 gap-2.5">
-              {DEMO_ACCOUNTS.map((account) => (
+              {DEMO_ACCOUNTS.filter(a => a.role === currentRole).map((account) => (
                 <button
                   key={account.role}
                   type="button"
-                  className="p-3 text-left rounded-xl border border-border/70 bg-card hover:border-primary/50 hover:bg-muted/40 transition-all duration-150 shadow-xs flex flex-col justify-between group"
+                  className="p-3 text-left rounded-xl border border-border/70 bg-card hover:border-primary/50 hover:bg-muted/40 transition-all duration-150 shadow-xs flex flex-col justify-between group col-span-2"
                   onClick={() => quickLogin(account)}
                   disabled={isSubmitting}
                 >
                   <div className="flex items-center justify-between w-full mb-1">
                     <span className="text-base">{account.icon}</span>
                     <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded bg-muted/60 text-muted-foreground group-hover:text-primary group-hover:bg-primary/10 transition-colors">
-                      Demo
+                      Demo Login
                     </span>
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-foreground group-hover:text-primary transition-colors">{account.label}</p>
+                    <p className="text-xs font-bold text-foreground group-hover:text-primary transition-colors">{account.label} Access</p>
                     <p className="text-[10px] text-muted-foreground truncate w-full mt-0.5">{account.email}</p>
                   </div>
                 </button>
@@ -224,7 +226,7 @@ export default function LoginPage() {
           </form>
 
           <p className="text-xs text-center text-muted-foreground pt-2">
-            Tip: Click any demo role badge above for instant single-click entry.
+            Tip: Click the demo role badge above for instant single-click entry.
           </p>
         </div>
       </div>
